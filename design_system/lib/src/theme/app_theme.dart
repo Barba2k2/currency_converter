@@ -12,7 +12,7 @@ class AppTheme {
     textTheme: TextTheme(
       titleLarge: GoogleFonts.inter(
         fontWeight: FontWeight.w600,
-        fontSize: 16,
+        fontSize: 20,
         height: 1.25,
       ),
       bodyMedium: GoogleFonts.inter(
