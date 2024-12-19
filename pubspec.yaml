@@ -11,6 +11,9 @@ dependencies:
     sdk: flutter
   design_system:
     path: ./design_system
+  flutter_svg: ^2.0.16
+  path_provider: ^2.1.5
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

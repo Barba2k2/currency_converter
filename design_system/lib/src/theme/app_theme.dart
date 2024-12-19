@@ -11,7 +11,7 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       titleLarge: GoogleFonts.inter(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         fontSize: 20,
         height: 1.25,
       ),

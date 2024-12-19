@@ -3,6 +3,7 @@ import 'package:design_system/design_system.dart';
 import 'src/app_widget.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MainApp());
 }
 
