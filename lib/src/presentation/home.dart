@@ -16,8 +16,6 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-// TODO: Add Ads for Android and iOs, move to production
-
 class _HomeState extends State<Home> {
   final CurrencyController controller = CurrencyController();
   BannerAd? _bannerAd;
