@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../service/currency_service.dart';
@@ -10,17 +12,31 @@ class CurrencyController {
 
   String _topCurrency = 'USD';
   String _bottomCurrency = 'BRL';
+  List<Map<String, String>> _currencies = [];
 
   String get topCurrency => _topCurrency;
   String get bottomCurrency => _bottomCurrency;
+  List<Map<String, String>> get currencies => _currencies;
 
-  final List<Map<String, String>> currencies = [
-    {'code': 'USD', 'name': 'Dólar Americano'},
-    {'code': 'EUR', 'name': 'Euro'},
-    {'code': 'BRL', 'name': 'Real Brasileiro'},
-    {'code': 'GBP', 'name': 'Libra Esterlina'},
-    {'code': 'JPY', 'name': 'Iene Japonês'},
-  ];
+  Future<void> loadCurrencies() async {
+    try {
+      final currenciesMap = await currencyService.getCurrencies();
+      _currencies = currenciesMap.entries
+          .map((entry) => {
+                'code': entry.key,
+                'name': entry.value,
+              })
+          .toList();
+    } catch (e) {
+      log('Erro ao carregar moedas: $e');
+      // Em caso de erro, use uma lista padrão
+      _currencies = [
+        {'code': 'USD', 'name': 'US Dollar'},
+        {'code': 'EUR', 'name': 'Euro'},
+        {'code': 'BRL', 'name': 'Brazilian Real'},
+      ];
+    }
+  }
 
   void setTopCurrency(String value) {
     _topCurrency = value;
