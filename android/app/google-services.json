@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:68049647092:android:b7afc06d0b6c09c58c35a1",
+        "mobilesdk_app_id": "1:68049647092:android:aad45ff5f94612ab8c35a1",
         "android_client_info": {
-          "package_name": "com.barbate"
+          "package_name": "com.barbatech.currency_converter"
         }
       },
       "oauth_client": [],

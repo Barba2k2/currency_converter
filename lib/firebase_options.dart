@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAgSXxvHi15tJ0Qy09pzXFzgs90nJKm_dM',
-    appId: '1:68049647092:android:b7afc06d0b6c09c58c35a1',
+    appId: '1:68049647092:android:aad45ff5f94612ab8c35a1',
     messagingSenderId: '68049647092',
     projectId: 'currency-converter-be79d',
     storageBucket: 'currency-converter-be79d.firebasestorage.app',
