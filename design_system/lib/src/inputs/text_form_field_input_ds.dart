@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../design_system.dart';
 
@@ -51,6 +52,12 @@ class _TextInputDsState extends State<TextInputDs> {
           keyboardType: widget.textInputType,
           controller: widget.controller,
           onTap: widget.onTap,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(
+              RegExp(r'^\d*\.?\d{0,2}'),
+            ),
+            LengthLimitingTextInputFormatter(10),
+          ],
           decoration: InputDecoration(
             focusedBorder: widget.focusedBorder,
             hintText: widget.label,
