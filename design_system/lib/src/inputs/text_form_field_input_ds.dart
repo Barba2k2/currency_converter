@@ -14,6 +14,7 @@ class TextInputDs extends StatefulWidget {
   final String selectedCurrency;
   final Function(String)? onCurrencyChanged;
   final List<PopupMenuEntry<String>> Function(BuildContext) itemBuilder;
+  final InputBorder? focusedBorder;
 
   const TextInputDs({
     super.key,
@@ -28,6 +29,7 @@ class TextInputDs extends StatefulWidget {
     required this.selectedCurrency,
     this.onCurrencyChanged,
     required this.itemBuilder,
+    this.focusedBorder,
   });
 
   @override
@@ -50,6 +52,7 @@ class _TextInputDsState extends State<TextInputDs> {
           controller: widget.controller,
           onTap: widget.onTap,
           decoration: InputDecoration(
+            focusedBorder: widget.focusedBorder,
             hintText: widget.label,
             hintStyle: theme.textTheme.bodyLarge,
             filled: widget.isFilled,
@@ -58,26 +61,48 @@ class _TextInputDsState extends State<TextInputDs> {
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.circular(8),
             ),
-            suffixIcon: PopupMenuButton<String>(
-              icon: Row(
-                spacing: 4,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.selectedCurrency,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.black,
-                  ),
-                ],
+            suffixIcon: SizedBox(
+              width: 100,
+              child: DropdownButton<String>(
+                value: widget.selectedCurrency,
+                dropdownColor: AppColors.white,
+                isExpanded: false,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.black,
+                ),
+                underline: Container(),
+                alignment: AlignmentDirectional.centerEnd,
+                onChanged: (String? newValue) {
+                  if (newValue != null && widget.onCurrencyChanged != null) {
+                    widget.onCurrencyChanged!(newValue);
+                  }
+                },
+                selectedItemBuilder: (BuildContext context) {
+                  return widget.itemBuilder(context).whereType<PopupMenuItem<String>>().map<Widget>(
+                    (PopupMenuItem<String> item) {
+                      final currencyCode = item.value?.split(' - ').first ?? '';
+                      return Center(
+                        child: Text(
+                          currencyCode,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    },
+                  ).toList();
+                },
+                items: widget.itemBuilder(context).whereType<PopupMenuItem<String>>().map(
+                  (PopupMenuItem<String> item) {
+                    return DropdownMenuItem<String>(
+                      value: item.value,
+                      child: Text(item.value ?? ''),
+                    );
+                  },
+                ).toList(),
               ),
-              onSelected: widget.onCurrencyChanged,
-              itemBuilder: widget.itemBuilder,
             ),
           ),
         ),
