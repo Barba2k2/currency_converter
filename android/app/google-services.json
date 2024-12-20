@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "68049647092",
+    "project_id": "currency-converter-be79d",
+    "storage_bucket": "currency-converter-be79d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68049647092:android:b7afc06d0b6c09c58c35a1",
+        "android_client_info": {
+          "package_name": "com.barbate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgSXxvHi15tJ0Qy09pzXFzgs90nJKm_dM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
