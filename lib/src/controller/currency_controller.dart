@@ -84,15 +84,32 @@ class CurrencyController {
 
   Future<void> _convertCurrency(double amount, String from, String to) async {
     try {
+      // Limitar o valor máximo para evitar estouro
+      if (amount > 999999.99) {
+        amount = 999999.99;
+        if (isConvertingTop) {
+          topController.text = amount.toStringAsFixed(2);
+        } else {
+          bottomController.text = amount.toStringAsFixed(2);
+        }
+      }
+
       final result = await currencyService.convertCurrency(from, to, amount);
 
+      // Formatar o resultado para evitar números muito grandes
       if (isConvertingTop) {
         bottomController.text = result.toStringAsFixed(2);
       } else {
         topController.text = result.toStringAsFixed(2);
       }
     } catch (e) {
-      print('Erro na conversão: $e');
+      log('Erro na conversão: $e');
+      // Adicionar tratamento de erro aqui
+      if (isConvertingTop) {
+        bottomController.text = '0.00';
+      } else {
+        topController.text = '0.00';
+      }
     }
   }
 
