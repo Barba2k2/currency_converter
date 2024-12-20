@@ -6,16 +6,29 @@ class CurrencyService {
   static const String baseUrl = 'https://api.frankfurter.app';
 
   Future<double> convertCurrency(String from, String to, double amount) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/latest?amount=$amount&from=$from&to=$to'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/latest?amount=$amount&from=$from&to=$to'),
+      );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      log('Data: ${data.toString()}');
-      return data['rates'][to];
-    } else {
-      throw Exception('Falha ao converter moeda');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        log('Data: ${data.toString()}');
+
+        // Garantir que o valor retornado seja um double válido
+        final rate = data['rates'][to];
+        if (rate is int) {
+          return rate.toDouble();
+        } else if (rate is double) {
+          return rate;
+        }
+        return 0.0;
+      } else {
+        throw Exception('Falha ao converter moeda');
+      }
+    } catch (e) {
+      log('Erro na conversão: $e');
+      return 0.0;
     }
   }
 
