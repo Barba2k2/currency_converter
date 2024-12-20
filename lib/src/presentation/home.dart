@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../controller/currency_controller.dart';
+import '../helper/ad_helper.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,8 +16,12 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+// TODO: Add Ads for Android and iOs, move to production
+
 class _HomeState extends State<Home> {
   final CurrencyController controller = CurrencyController();
+  BannerAd? _bannerAd;
+  InterstitialAd? _interstitialAd;
 
   @override
   void initState() {
@@ -23,6 +29,7 @@ class _HomeState extends State<Home> {
     controller.topController.addListener(controller.onTopValueChanged);
     controller.bottomController.addListener(controller.onBottomValueChanged);
     _loadInitialData();
+    _initAds();
   }
 
   Future<void> _loadInitialData() async {
@@ -30,8 +37,50 @@ class _HomeState extends State<Home> {
     if (mounted) setState(() {});
   }
 
+  Future<void> _initAds() async {
+    await MobileAds.instance.initialize();
+
+    _loadBannerAd();
+
+    _loadInterstitialAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {});
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+        },
+      ),
+    );
+    _bannerAd?.load();
+  }
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          _loadInterstitialAd();
+        },
+      ),
+    );
+  }
+
   @override
   void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -64,6 +113,18 @@ class _HomeState extends State<Home> {
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(8),
       ),
+    );
+  }
+
+  Widget _buildBannerAd() {
+    if (_bannerAd == null) {
+      return const SizedBox();
+    }
+
+    return SizedBox(
+      width: _bannerAd!.size.width.toDouble(),
+      height: _bannerAd!.size.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 
@@ -174,6 +235,12 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
+          ),
+          Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: _buildBannerAd(),
           ),
           Align(
             alignment: Alignment.bottomCenter,
