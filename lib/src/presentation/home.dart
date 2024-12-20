@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../controller/currency_controller.dart';
 
@@ -137,12 +140,24 @@ class _HomeState extends State<Home> {
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: SvgPicture.asset(
-                            AppImage.arrowsCurrency,
-                            package: AppImage.packageName,
+                        child: GestureDetector(
+                          onTap: () {
+                            log('Updated');
+                            if (controller.topController.text.isNotEmpty) {
+                              controller.isConvertingTop = true;
+                              controller.onTopValueChanged();
+                            } else if (controller.bottomController.text.isNotEmpty) {
+                              controller.isConvertingTop = false;
+                              controller.onBottomValueChanged();
+                            }
+                          },
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: SvgPicture.asset(
+                              AppImage.arrowsCurrency,
+                              package: AppImage.packageName,
+                            ),
                           ),
                         ),
                       ),
@@ -153,6 +168,59 @@ class _HomeState extends State<Home> {
                             setState(() => controller.setBottomCurrency(value)),
                         isTop: false,
                         label: 'R\$ 100.00',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: GestureDetector(
+                onTap: () async {
+                  const url = 'https://linkedin.com/in/lorenzo-dz';
+                  log('Developed by Barba Tech');
+                  try {
+                    await launchUrlString(
+                      url,
+                      mode: LaunchMode.externalApplication,
+                    );
+                  } catch (e) {
+                    log(e.toString());
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.gray400.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.code,
+                        size: 16,
+                        color: AppColors.gray100,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Developed by Barba Tech',
+                        style: AppTheme.theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                          color: AppColors.gray100,
+                        ),
                       ),
                     ],
                   ),
