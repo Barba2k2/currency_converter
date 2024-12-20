@@ -1,36 +1,26 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/material.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 import '../../firebase_options.dart';
 
 class ApplicationConfig {
+  final shorebirdCodePush = ShorebirdCodePush();
+
   Future<void> consfigureApp() async {
-    WidgetsFlutterBinding.ensureInitialized();
     await _firebaseCoreConfig();
+    await _checkForUpdates();
+  }
+
+  Future<void> _checkForUpdates() async {
+    final isUpdateAvailable = await shorebirdCodePush.isNewPatchAvailableForDownload();
+    if (isUpdateAvailable) {
+      await shorebirdCodePush.downloadUpdateIfAvailable();
+    }
   }
 
   Future<void> _firebaseCoreConfig() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  }
-
-  Future<void> initializeRemoteConfig() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 1),
-    ));
-
-    // Definindo valores default
-    await remoteConfig.setDefaults(
-      {
-        'is_new_feature_enabled': false,
-        'feature_config': '{"title": "Default Title", "enabled": false}'
-      },
-    );
-
-    await remoteConfig.fetchAndActivate();
   }
 }
