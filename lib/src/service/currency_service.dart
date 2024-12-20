@@ -30,4 +30,18 @@ class CurrencyService {
       throw Exception('Falha ao carregar taxas');
     }
   }
+
+  Future<Map<String, String>> getCurrencies() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/currencies'),
+    );
+
+    if (response.statusCode == 200) {
+      return Map<String, String>.from(
+        json.decode(response.body),
+      );
+    } else {
+      throw Exception('Falha ao carregar moedas');
+    }
+  }
 }
