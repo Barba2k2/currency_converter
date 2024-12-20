@@ -1,9 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:design_system/design_system.dart';
-import 'src/app_widget.dart';
+import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MainApp());
+import 'src/app_widget.dart';
+import 'src/core/application_config.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ApplicationConfig().consfigureApp();
+
+  runApp(
+    const MainApp(),
+  );
 }
 
 class MainApp extends StatelessWidget {
