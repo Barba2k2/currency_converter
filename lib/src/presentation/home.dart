@@ -19,6 +19,12 @@ class _HomeState extends State<Home> {
     super.initState();
     controller.topController.addListener(controller.onTopValueChanged);
     controller.bottomController.addListener(controller.onBottomValueChanged);
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    await controller.loadCurrencies();
+    if (mounted) setState(() {});
   }
 
   @override
@@ -31,46 +37,29 @@ class _HomeState extends State<Home> {
     required TextEditingController textController,
     required String selectedCurrency,
     required Function(String) onCurrencyChanged,
+    required String label,
     required bool isTop,
   }) {
-    return TextFormField(
+    return TextInputDs(
       controller: textController,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onTap: () {
         controller.isConvertingTop = isTop;
       },
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(
-          borderSide: BorderSide.none,
-        ),
-        filled: true,
-        fillColor: AppColors.white,
-        suffixIcon: PopupMenuButton<String>(
-          icon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                selectedCurrency,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Icon(Icons.arrow_drop_down, color: Colors.black),
-              const SizedBox(width: 8),
-            ],
-          ),
-          onSelected: onCurrencyChanged,
-          itemBuilder: (BuildContext context) => controller.currencies
-              .map(
-                (currency) => PopupMenuItem(
-                  value: currency['code'],
-                  child: Text('${currency['code']} - ${currency['name']}'),
-                ),
-              )
-              .toList(),
-        ),
+      itemBuilder: (BuildContext context) => controller.currencies
+          .map(
+            (currency) => PopupMenuItem(
+              value: currency['code'],
+              child: Text('${currency['code']} - ${currency['name']}'),
+            ),
+          )
+          .toList(),
+      isFilled: true,
+      onCurrencyChanged: onCurrencyChanged,
+      label: label,
+      selectedCurrency: selectedCurrency,
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }
@@ -84,6 +73,7 @@ class _HomeState extends State<Home> {
           Padding(
             padding: const EdgeInsets.only(top: 80),
             child: Row(
+              spacing: 8,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
@@ -94,7 +84,6 @@ class _HomeState extends State<Home> {
                     package: AppImage.packageName,
                   ),
                 ),
-                const SizedBox(width: 8),
                 Text(
                   'Exchange',
                   style: AppTheme.theme.textTheme.titleLarge,
@@ -105,31 +94,65 @@ class _HomeState extends State<Home> {
           Align(
             alignment: Alignment.center,
             child: SizedBox(
-              width: 340,
-              height: 320,
+              width: 360,
+              height: 380,
               child: Container(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade300,
+                  color: AppColors.gray400,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
+                    spacing: 16,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Column(
+                        spacing: 8,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Conversor de moedas',
+                              style: AppTheme.theme.textTheme.titleLarge,
+                            ),
+                          ),
+                          Text(
+                            'Digite o valor escolha as moedas de conversão',
+                            style: AppTheme.theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       _buildCurrencyField(
                         textController: controller.topController,
                         selectedCurrency: controller.topCurrency,
                         onCurrencyChanged: (value) =>
                             setState(() => controller.setTopCurrency(value)),
                         isTop: true,
+                        label: '\$ 100.00',
                       ),
-                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: SvgPicture.asset(
+                            AppImage.arrowsCurrency,
+                            package: AppImage.packageName,
+                          ),
+                        ),
+                      ),
                       _buildCurrencyField(
                         textController: controller.bottomController,
                         selectedCurrency: controller.bottomCurrency,
                         onCurrencyChanged: (value) =>
                             setState(() => controller.setBottomCurrency(value)),
                         isTop: false,
+                        label: 'R\$ 100.00',
                       ),
                     ],
                   ),
