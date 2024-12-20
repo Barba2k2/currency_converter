@@ -5,27 +5,29 @@ import '../../design_system.dart';
 class TextInputDs extends StatefulWidget {
   final String label;
   final TextEditingController? controller;
-  final String? Function(String?)? validator;
   final double height;
   final double width;
   final bool isFilled;
-  final bool isPassword;
   final TextInputType textInputType;
   final ValueChanged<String>? onChanged;
-  final AutovalidateMode? autovalidateMode;
+  final VoidCallback onTap;
+  final String selectedCurrency;
+  final Function(String)? onCurrencyChanged;
+  final List<PopupMenuEntry<String>> Function(BuildContext) itemBuilder;
 
   const TextInputDs({
     super.key,
     required this.label,
     this.controller,
-    this.validator,
     this.height = 50,
     this.width = 303,
     this.isFilled = true,
-    this.isPassword = false,
     this.onChanged,
-    this.autovalidateMode,
-    this.textInputType = TextInputType.text,
+    this.textInputType = const TextInputType.numberWithOptions(decimal: true),
+    required this.onTap,
+    required this.selectedCurrency,
+    this.onCurrencyChanged,
+    required this.itemBuilder,
   });
 
   @override
@@ -33,10 +35,10 @@ class TextInputDs extends StatefulWidget {
 }
 
 class _TextInputDsState extends State<TextInputDs> {
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return SizedBox(
       height: widget.height,
       width: widget.width,
@@ -46,8 +48,7 @@ class _TextInputDsState extends State<TextInputDs> {
         child: TextFormField(
           keyboardType: widget.textInputType,
           controller: widget.controller,
-          validator: widget.validator,
-          onChanged: widget.onChanged,
+          onTap: widget.onTap,
           decoration: InputDecoration(
             hintText: widget.label,
             hintStyle: theme.textTheme.bodyLarge,
@@ -56,6 +57,27 @@ class _TextInputDsState extends State<TextInputDs> {
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.circular(8),
+            ),
+            suffixIcon: PopupMenuButton<String>(
+              icon: Row(
+                spacing: 4,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    widget.selectedCurrency,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+              onSelected: widget.onCurrencyChanged,
+              itemBuilder: widget.itemBuilder,
             ),
           ),
         ),
