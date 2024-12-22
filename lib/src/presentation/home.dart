@@ -20,6 +20,7 @@ class _HomeState extends State<Home> {
   final CurrencyController controller = CurrencyController();
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
+  bool _isBannerAdLoaded = false;
 
   @override
   void initState() {
@@ -50,9 +51,12 @@ class _HomeState extends State<Home> {
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (ad) {
-          setState(() {});
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
         },
         onAdFailedToLoad: (ad, error) {
+          log('Banner Ad failed to load: $error');
           ad.dispose();
         },
       ),
@@ -66,9 +70,12 @@ class _HomeState extends State<Home> {
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          _interstitialAd = ad;
+          setState(() {
+            _interstitialAd = ad;
+          });
         },
         onAdFailedToLoad: (error) {
+          log('Interstitial Ad failed to load: $error');
           _loadInterstitialAd();
         },
       ),
@@ -115,7 +122,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildBannerAd() {
-    if (_bannerAd == null) {
+    if (_bannerAd == null || !_isBannerAdLoaded) {
       return const SizedBox();
     }
 
@@ -128,13 +135,15 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.white,
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 80),
-            child: Row(
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 16,
+          children: [
+            const SizedBox(height: 40),
+            Row(
               spacing: 8,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -152,97 +161,87 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: 360,
-              height: 380,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.gray400,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    spacing: 16,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        spacing: 8,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Conversor de moedas',
-                              style: AppTheme.theme.textTheme.titleLarge,
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 360,
+                height: 380,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.gray400,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      spacing: 16,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          spacing: 8,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Conversor de moedas',
+                                style: AppTheme.theme.textTheme.titleLarge,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Digite o valor escolha as moedas de conversão',
-                            style: AppTheme.theme.textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildCurrencyField(
-                        textController: controller.topController,
-                        selectedCurrency: controller.topCurrency,
-                        onCurrencyChanged: (value) =>
-                            setState(() => controller.setTopCurrency(value)),
-                        isTop: true,
-                        label: '\$ 100.00',
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: GestureDetector(
-                          onTap: () {
-                            log('Updated');
-                            if (controller.topController.text.isNotEmpty) {
-                              controller.isConvertingTop = true;
-                              controller.onTopValueChanged();
-                            } else if (controller.bottomController.text.isNotEmpty) {
-                              controller.isConvertingTop = false;
-                              controller.onBottomValueChanged();
-                            }
-                          },
-                          child: SizedBox(
-                            width: 32,
-                            height: 32,
-                            child: SvgPicture.asset(
-                              AppImage.arrowsCurrency,
-                              package: AppImage.packageName,
+                            Text(
+                              'Digite o valor escolha as moedas de conversão',
+                              style: AppTheme.theme.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        _buildCurrencyField(
+                          textController: controller.topController,
+                          selectedCurrency: controller.topCurrency,
+                          onCurrencyChanged: (value) =>
+                              setState(() => controller.setTopCurrency(value)),
+                          isTop: true,
+                          label: '\$ 100.00',
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: GestureDetector(
+                            onTap: () {
+                              log('Updated');
+                              if (controller.topController.text.isNotEmpty) {
+                                controller.isConvertingTop = true;
+                                controller.onTopValueChanged();
+                              } else if (controller.bottomController.text.isNotEmpty) {
+                                controller.isConvertingTop = false;
+                                controller.onBottomValueChanged();
+                              }
+                            },
+                            child: SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: SvgPicture.asset(
+                                AppImage.arrowsCurrency,
+                                package: AppImage.packageName,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      _buildCurrencyField(
-                        textController: controller.bottomController,
-                        selectedCurrency: controller.bottomCurrency,
-                        onCurrencyChanged: (value) =>
-                            setState(() => controller.setBottomCurrency(value)),
-                        isTop: false,
-                        label: 'R\$ 100.00',
-                      ),
-                    ],
+                        _buildCurrencyField(
+                          textController: controller.bottomController,
+                          selectedCurrency: controller.bottomCurrency,
+                          onCurrencyChanged: (value) =>
+                              setState(() => controller.setBottomCurrency(value)),
+                          isTop: false,
+                          label: 'R\$ 100.00',
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 80,
-            left: 0,
-            right: 0,
-            child: _buildBannerAd(),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
+            _buildBannerAd(),
+            Padding(
               padding: const EdgeInsets.only(bottom: 30),
               child: GestureDetector(
                 onTap: () async {
@@ -272,13 +271,13 @@ class _HomeState extends State<Home> {
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    spacing: 8,
                     children: [
                       const Icon(
                         Icons.code,
                         size: 16,
                         color: AppColors.gray100,
                       ),
-                      const SizedBox(width: 8),
                       Text(
                         'Developed by Barba Tech',
                         style: AppTheme.theme.textTheme.bodySmall?.copyWith(
@@ -292,8 +291,8 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
