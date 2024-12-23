@@ -140,9 +140,9 @@ class _HomeState extends State<Home> {
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          spacing: 16,
+          spacing: 80,
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
             Row(
               spacing: 8,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -161,81 +161,78 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 360,
-                height: 380,
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.gray400,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      spacing: 16,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          spacing: 8,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Conversor de moedas',
-                                style: AppTheme.theme.textTheme.titleLarge,
-                              ),
+            SizedBox(
+              width: 360,
+              height: 380,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.gray400,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    spacing: 16,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        spacing: 8,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Conversor de moedas',
+                              style: AppTheme.theme.textTheme.titleLarge,
                             ),
-                            Text(
-                              'Digite o valor escolha as moedas de conversão',
-                              style: AppTheme.theme.textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        _buildCurrencyField(
-                          textController: controller.topController,
-                          selectedCurrency: controller.topCurrency,
-                          onCurrencyChanged: (value) =>
-                              setState(() => controller.setTopCurrency(value)),
-                          isTop: true,
-                          label: '\$ 100.00',
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: GestureDetector(
-                            onTap: () {
-                              log('Updated');
-                              if (controller.topController.text.isNotEmpty) {
-                                controller.isConvertingTop = true;
-                                controller.onTopValueChanged();
-                              } else if (controller.bottomController.text.isNotEmpty) {
-                                controller.isConvertingTop = false;
-                                controller.onBottomValueChanged();
-                              }
-                            },
-                            child: SizedBox(
-                              width: 32,
-                              height: 32,
-                              child: SvgPicture.asset(
-                                AppImage.arrowsCurrency,
-                                package: AppImage.packageName,
-                              ),
+                          ),
+                          Text(
+                            'Digite o valor escolha as moedas de conversão',
+                            style: AppTheme.theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      _buildCurrencyField(
+                        textController: controller.topController,
+                        selectedCurrency: controller.topCurrency,
+                        onCurrencyChanged: (value) =>
+                            setState(() => controller.setTopCurrency(value)),
+                        isTop: true,
+                        label: '\$ 100.00',
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () {
+                            log('Updated');
+                            if (controller.topController.text.isNotEmpty) {
+                              controller.isConvertingTop = true;
+                              controller.onTopValueChanged();
+                            } else if (controller.bottomController.text.isNotEmpty) {
+                              controller.isConvertingTop = false;
+                              controller.onBottomValueChanged();
+                            }
+                          },
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: SvgPicture.asset(
+                              AppImage.arrowsCurrency,
+                              package: AppImage.packageName,
                             ),
                           ),
                         ),
-                        _buildCurrencyField(
-                          textController: controller.bottomController,
-                          selectedCurrency: controller.bottomCurrency,
-                          onCurrencyChanged: (value) =>
-                              setState(() => controller.setBottomCurrency(value)),
-                          isTop: false,
-                          label: 'R\$ 100.00',
-                        ),
-                      ],
-                    ),
+                      ),
+                      _buildCurrencyField(
+                        textController: controller.bottomController,
+                        selectedCurrency: controller.bottomCurrency,
+                        onCurrencyChanged: (value) =>
+                            setState(() => controller.setBottomCurrency(value)),
+                        isTop: false,
+                        label: 'R\$ 100.00',
+                      ),
+                    ],
                   ),
                 ),
               ),
