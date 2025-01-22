@@ -1,12 +1,14 @@
 name: currency_converter
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.1
+version: 0.1.2
 
 environment:
   sdk: ^3.5.4
 
 dependencies:
+  flutter_localizations:
+    sdk: flutter
   flutter:
     sdk: flutter
   design_system:
@@ -20,6 +22,7 @@ dependencies:
   firebase_remote_config: ^5.2.0
   shorebird_code_push: ^1.1.6
   firebase_analytics: ^11.3.6
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +31,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/lang/
