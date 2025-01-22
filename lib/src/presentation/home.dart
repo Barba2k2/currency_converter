@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../controller/currency_controller.dart';
 import '../helper/ad_helper.dart';
+import '../helpers/l10n.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -135,6 +136,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final translator = AppLocalizations.of(context);
+
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SingleChildScrollView(
@@ -156,7 +159,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Text(
-                  'Exchange',
+                  translator.translate('title'),
                   style: AppTheme.theme.textTheme.titleLarge,
                 ),
               ],
@@ -182,13 +185,16 @@ class _HomeState extends State<Home> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Conversor de moedas',
+                              translator.translate('exchange'),
                               style: AppTheme.theme.textTheme.titleLarge,
                             ),
                           ),
-                          Text(
-                            'Digite o valor escolha as moedas de conversão',
-                            style: AppTheme.theme.textTheme.bodySmall,
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              translator.translate('enter_value'),
+                              style: AppTheme.theme.textTheme.bodySmall,
+                            ),
                           ),
                         ],
                       ),
@@ -199,13 +205,12 @@ class _HomeState extends State<Home> {
                         onCurrencyChanged: (value) =>
                             setState(() => controller.setTopCurrency(value)),
                         isTop: true,
-                        label: '\$ 100.00',
+                        label: translator.translate('label_top'),
                       ),
                       Align(
                         alignment: Alignment.center,
                         child: GestureDetector(
                           onTap: () {
-                            log('Updated');
                             if (controller.topController.text.isNotEmpty) {
                               controller.isConvertingTop = true;
                               controller.onTopValueChanged();
@@ -230,7 +235,7 @@ class _HomeState extends State<Home> {
                         onCurrencyChanged: (value) =>
                             setState(() => controller.setBottomCurrency(value)),
                         isTop: false,
-                        label: 'R\$ 100.00',
+                        label: translator.translate('label_bottom'),
                       ),
                     ],
                   ),
@@ -243,7 +248,6 @@ class _HomeState extends State<Home> {
               child: GestureDetector(
                 onTap: () async {
                   const url = 'https://linkedin.com/in/lorenzo-dz';
-                  log('Developed by Barba Tech');
                   try {
                     await launchUrlString(
                       url,
@@ -276,7 +280,7 @@ class _HomeState extends State<Home> {
                         color: AppColors.gray100,
                       ),
                       Text(
-                        'Developed by Barba Tech',
+                        translator.translate('developed_by'),
                         style: AppTheme.theme.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
